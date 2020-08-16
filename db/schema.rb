@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20200810022720) do
     t.integer  "condition",                       null: false
     t.integer  "prefecture_id",                   null: false
     t.integer  "preparationdays",                 null: false
-    t.boolean  "is_shipping_buyer",               null: false
+    t.boolean  "is_shipping_buyer"
     t.integer  "saler_id_id"
     t.integer  "buyer_id_id"
     t.integer  "category_id",                     null: false

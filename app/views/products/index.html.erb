@@ -1,0 +1,8 @@
+product#index
+<%= link_to '商品詳細ページへ'%>
+<% @products.each do |product| %>
+<%= product.id %>
+<%= product.name %>
+<%= link_to '編集', "/products/#{product.id}/edit", method: :get %>
+<%= link_to '削除', "/products/#{product.id}", method: :delete %>
+<% end %>
