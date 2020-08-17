@@ -6,7 +6,8 @@
 </div>
 <div class="productsale__main">
   <%# 統合してからurlを正しいものに修正する %>
-  <%= form_for @product, url: root_path do |f| %>
+  <%= form_for @product do |f| %>
+
   <div class="productsale__main__containers">
     <div class="productsale__main__containers__image">
     <div class="productsale__main__containers__image__title">
@@ -14,10 +15,17 @@
       <div class="productsale__main__containers__image__title__required">必須</div>
     </div>
     <h1>最大10枚までアップロードできます</h1>
-
     <div class="productsale__main__containers__image__upload">
+      <%= f.fields_for :pictures do |i|%>
       <p><i class="fas fa-camera"></i></p>
       <p>ドラッグアンドドロップ<br>またはクリックしてファイルをアップロード</p>  
+      <div id="image-box">
+       <div class="js-file_group" data-index="#{i.index}">
+        <%= i.file_field :image, class: 'js-file'%>
+        <span class="js-remove">削除</span>
+       </div>
+       <% end %>
+      </div>
     </div>
   </div>
   <div class="productsale__main__containers__info">
@@ -47,7 +55,12 @@
       <div class="productsale__main__containers__details__title__required">必須</div>
     </div>
     <%# 統合してからプルダウンに修正する %>
-    <%= f.text_field :category_id, :placeholder => "選択してください"  %>
+    <div class="listing-product-detail__category">
+      <div class="listing-select-wrapper">
+        <div class="listing-select-wrapper__box"></div>
+        <%= f.select :category_id, @category_parent_array.map{|category| [category.name, category.id]},{include_blank:'---'}, {class: 'listing-select-wrapper__box--select', id: 'parent_category'} %>
+      </div>
+    </div>
 
     <div class="productsale__main__containers__details__title">
       <p>ブランド</p> 
@@ -60,7 +73,7 @@
       <div class="productsale__main__containers__details__title__required">必須</div>
     </div>
     <%# 統合してからプルダウンに修正する %>
-    <%= f.text_field :brand, :placeholder => "選択してください"  %>
+    <%= f.select :condition, Product.conditions.keys.map {|k| [k, k]}, {}, { class: 'form-control', style: 'margin-bottom: 15px;', data: {} } %>
 
   </div>
 
@@ -71,28 +84,29 @@
       <div class="productsale__main__containers__shipping__title__required">必須</div>
      </div>
     <%# 統合してからプルダウンに修正する %>
-     <%= f.text_field :brand, :placeholder => "選択してください"  %>
+    <%= f.select :is_shipping_buyer, [["配送料なし（出品者負担）", false], ["配送料あり（購入者負担）", true]] %>
 
     <div class="productsale__main__containers__shipping__title">
        <p>発送元の地域</p> 
       <div class="productsale__main__containers__shipping__title__required">必須</div>
     </div>
     <%# 統合してからプルダウンに修正する %>
-    <%= f.text_field :brand, :placeholder => "選択してください"  %>
+    <%= f.collection_select :prefecture_id, Prefecture.all, :id, :name,{prompt: "都道府県"}, {class: "prefecture"} %>
 
     <div class="productsale__main__containers__shipping__title">
        <p>発送までの日数</p> 
       <div class="productsale__main__containers__shipping__title__required">必須</div>
     </div>
     <%# 統合してからプルダウンに修正する %>
-    <%= f.text_field :condition, :placeholder => "選択してください"  %>
+    <%= f.select :preparationdays, Product.preparationdays.keys.map {|k| [k, k]}, {}, { class: 'form-control', style: 'margin-bottom: 15px;', data: {} } %>
+
   </div>
   <div class="productsale__main__containers__price">
    <h1>価格（¥300〜9,999,999）</h1>
     <div class="productsale__main__containers__price__title">
        <div><p>販売価格</p></div>
       <div class="productsale__main__containers__price__title__required">必須</div>
-      <span>¥</span><%= f.text_field :condition, :placeholder => "0"  %>
+      <span>¥</span><%= f.text_field :price, :placeholder => "0"  %>
     </div>
     <div class="productsale__main__containers__price__calculate">
       <div class="productsale__main__containers__price__calculate__margin">

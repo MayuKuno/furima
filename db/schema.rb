@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200810022720) do
+ActiveRecord::Schema.define(version: 20200817081305) do
 
   create_table "addresses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "postcode",                    null: false
@@ -25,6 +25,14 @@ ActiveRecord::Schema.define(version: 20200810022720) do
     t.index ["user_id"], name: "index_addresses_on_user_id", using: :btree
   end
 
+  create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name",       null: false
+    t.string   "ancestry"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", using: :btree
+  end
+
   create_table "creditcards", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "user_id",    null: false
     t.string   "card_id",    null: false
@@ -33,23 +41,34 @@ ActiveRecord::Schema.define(version: 20200810022720) do
     t.index ["user_id"], name: "index_creditcards_on_user_id", using: :btree
   end
 
+  create_table "pictures", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "image",      null: false
+    t.integer  "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_pictures_on_product_id", using: :btree
+  end
+
   create_table "products", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "price",                           null: false
     t.string   "name",                            null: false
+    t.integer  "price",                           null: false
     t.text     "explanation",       limit: 65535, null: false
-    t.string   "brand"
     t.integer  "condition",                       null: false
-    t.integer  "prefecture_id",                   null: false
     t.integer  "preparationdays",                 null: false
-    t.boolean  "is_shipping_buyer"
-    t.integer  "saler_id_id"
-    t.integer  "buyer_id_id"
+    t.integer  "prefecture_id",                   null: false
+    t.boolean  "is_shipping_buyer",               null: false
+    t.string   "brand"
+    t.integer  "saler_id"
+    t.integer  "buyer_id"
+    t.integer  "user_id",                         null: false
     t.integer  "category_id",                     null: false
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
-    t.index ["buyer_id_id"], name: "index_products_on_buyer_id_id", using: :btree
+    t.index ["buyer_id"], name: "index_products_on_buyer_id", using: :btree
     t.index ["category_id"], name: "index_products_on_category_id", using: :btree
-    t.index ["saler_id_id"], name: "index_products_on_saler_id_id", using: :btree
+    t.index ["name"], name: "index_products_on_name", using: :btree
+    t.index ["saler_id"], name: "index_products_on_saler_id", using: :btree
+    t.index ["user_id"], name: "index_products_on_user_id", using: :btree
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -73,4 +92,7 @@ ActiveRecord::Schema.define(version: 20200810022720) do
 
   add_foreign_key "addresses", "users"
   add_foreign_key "creditcards", "users"
+  add_foreign_key "pictures", "products"
+  add_foreign_key "products", "categories"
+  add_foreign_key "products", "users"
 end

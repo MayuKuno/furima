@@ -3,15 +3,16 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-  validates :nickname ,presence: true
-  validates :first_name ,presence: true
-  validates :last_name ,presence: true
-  validates :first_name_kana ,presence: true
-  validates :last_name_kana ,presence: true
-  validates :birthday ,presence: true
+  validates :nickname, :first_name, :last_name, :first_name_kana, :last_name_kana,  :birthday, presence:true
+
+  validates :email, uniqueness: true, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i} #同一メールアドレスを登録できないようにする。
+  validates :is_deleted, inclusion: { in: [true, false] }
   has_one :address
   include JpPrefecture
   jp_prefecture :prefecture_id
+  has_many  :bought_products,                                         foreign_key: "buyer_id", class_name: "Product",  dependent: :restrict_with_error
+  has_many  :saling_products, -> { where("buyer_id is NULL") },       foreign_key: "saler_id", class_name: "Product",  dependent: :restrict_with_error
+  has_many  :sold_products,   -> { where("buyer_id is not NULL") },   foreign_key: "saler_id", class_name: "Product",  dependent: :restrict_with_error
 
    def prefecture_name
     JpPrefecture::Prefecture.find(code: prefecture_id).try(:name)
